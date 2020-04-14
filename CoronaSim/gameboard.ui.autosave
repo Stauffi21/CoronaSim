@@ -125,6 +125,12 @@
         <height>50</height>
        </size>
       </property>
+      <property name="digitCount">
+       <number>1</number>
+      </property>
+      <property name="mode">
+       <enum>QLCDNumber::Dec</enum>
+      </property>
      </widget>
     </item>
    </layout>

@@ -13,8 +13,12 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        gameboard.cc
+        gameboard.cc \
+    coronafield.cc \
+    spielfigur.cc
 
-HEADERS  += gameboard.h
+HEADERS  += gameboard.h \
+    coronafield.h \
+    spielfigur.h
 
 FORMS    += gameboard.ui

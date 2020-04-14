@@ -3,6 +3,8 @@
 
 #include <QWidget>
 
+class CoronaField;
+
 namespace Ui {
 class gameboard;
 }
@@ -17,6 +19,12 @@ public:
 
 private:
     Ui::gameboard *ui;
+    CoronaField *coronaField;
+
+private slots:
+    void start();
+    void stop();
+    void reset();
 };
 
 #endif // GAMEBOARD_H
