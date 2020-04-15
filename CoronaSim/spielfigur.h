@@ -7,7 +7,7 @@ class spielfigur : public QObject
 {
     Q_OBJECT
 public:
-    explicit spielfigur(QObject *parent = 0);
+    spielfigur(QObject *parent = 0);
 
 signals:
 

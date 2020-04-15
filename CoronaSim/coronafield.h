@@ -3,11 +3,14 @@
 
 #include <QWidget>
 
-class coronafield : public QWidget
+class CoronaField : public QWidget
 {
     Q_OBJECT
 public:
-    explicit coronafield(QWidget *parent = 0);
+    CoronaField(QWidget *parent = 0);
+    void valueMenschen(int newValue);
+    void valueInfizierte(int newValue);
+    void valueAktive(int newValue);
 
 signals:
 
