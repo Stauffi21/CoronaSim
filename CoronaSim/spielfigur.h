@@ -2,16 +2,28 @@
 #define SPIELFIGUR_H
 
 #include <QObject>
+#include <QPointF>
+#include <QPainter>
+#include <QRectF>
 
-class spielfigur : public QObject
+class Spielfigur : public QObject
 {
     Q_OBJECT
 public:
-    spielfigur(QObject *parent = 0);
+    Spielfigur(QPointF xy);
 
+    QRectF BoundingRect() const;
+    QPointF Pos;
+    bool isInfected() const;
+    void infect();
+    void removeInfect();
 signals:
 
 public slots:
+
+private:
+    QRectF *HitBox;
+    bool IsInfected;
 };
 
 #endif // SPIELFIGUR_H

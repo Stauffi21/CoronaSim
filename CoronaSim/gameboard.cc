@@ -7,6 +7,7 @@ gameboard::gameboard(QWidget *parent) :
     ui(new Ui::gameboard)
 {
     ui->setupUi(this);
+    ui->infizierte->setDisabled(true);
     pCoronaField = new CoronaField();
     ui->gridLayout->addWidget(pCoronaField);
     connect(ui->menschen,SIGNAL(valueChanged(int)),this, SLOT(anzMenschen(int)));
@@ -24,13 +25,27 @@ void gameboard::stop(){}
 void gameboard::reset(){}
 void gameboard::anzMenschen(int i){
     int newValue=i;
-    pCoronaField->valueMenschen(newValue);
+    pCoronaField->setValueMenschen(newValue);
+    if(pCoronaField->ValueMenschen()<pCoronaField->ValueInfizierte()){
+        ui->infizierte->setDisabled(true);
+    }
+    else{
+        ui->infizierte->setEnabled(true);
+    }
+    ui->infizierte->setValue(pCoronaField->ValueInfizierte());
 }
 void gameboard::anzInfizierte(int i){
     int newValue = i;
-    pCoronaField->valueInfizierte(newValue);
+    if(pCoronaField->ValueMenschen()<newValue){
+        ui->infizierte->setDisabled(true);
+    }
+    else{
+        ui->infizierte->setEnabled(true);
+    }
+    pCoronaField->setValueInfizierte(newValue);
+    ui->infizierte->setValue(pCoronaField->ValueInfizierte());
 }
 void gameboard::anzAktive(int i){
     int newValue = i;
-    pCoronaField->valueAktive(newValue);
+    pCoronaField->setValueAktive(newValue);
 }
