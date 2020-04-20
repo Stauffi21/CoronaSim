@@ -1,20 +1,20 @@
 #include "spielfigur.h"
 #include "QDebug"
+#include <math.h>
 
 Spielfigur::Spielfigur(QPointF xy)
 {
     Pos = xy;
-    //asmxForce = randXForce;
-    //myForce = 4 - fabs(randXForce);
-    HitBox = new QRectF(0, 0, 20, 20);
+    Rect = new QRectF(0, 0, 20, 20);
     IsInfected = false;
-    IsMovable = false;
+    IsActive = false;
+    randomDirection = qrand()%2;
 }
 
 QRectF Spielfigur::BoundingRect() const
 {
-    HitBox->moveCenter(QPointF(Pos.x(), Pos.y()));
-    return *HitBox;
+    Rect->moveCenter(QPointF(Pos.x(), Pos.y()));
+    return *Rect;
 }
 
 bool Spielfigur::isInfected() const
@@ -22,9 +22,9 @@ bool Spielfigur::isInfected() const
     return IsInfected;
 }
 
-bool Spielfigur::isMovable() const
+bool Spielfigur::isActive() const
 {
-    return IsMovable;
+    return IsActive;
 }
 
 void Spielfigur::infect()
@@ -32,8 +32,8 @@ void Spielfigur::infect()
     IsInfected = true;
 }
 
-void Spielfigur::movable(){
-    IsMovable = true;
+void Spielfigur::active(){
+    IsActive = true;
 }
 
 void Spielfigur::removeInfect()
@@ -41,16 +41,32 @@ void Spielfigur::removeInfect()
     IsInfected = false;
 }
 
-void Spielfigur::removeMovable(){
-    IsMovable = false;
+void Spielfigur::removeActive(){
+    IsActive = false;
 }
 
 void Spielfigur::move(){
-    if(IsMovable){
-        Pos.setX(Pos.x()+1);
-        Pos.setY(Pos.y()+1);
-    }
-    else{
+    if(!isActive()){
         return;
     }
+    if(randomDirection == 0){
+        Pos.setX(Pos.x()+1);
+        Pos.setY(Pos.y()+1);
+        qDebug()<<BoundingRect();
+        qDebug()<<randomDirection;
+    }
+    if(randomDirection == 1){
+        Pos.setX(Pos.x()-1);
+        Pos.setY(Pos.y()-1);
+        qDebug()<<BoundingRect();
+        qDebug()<<randomDirection;
+    }
+}
+
+int Spielfigur::isDirection() const{
+    return randomDirection;
+}
+
+void Spielfigur::changeDirection(int direction){
+    randomDirection = direction;
 }

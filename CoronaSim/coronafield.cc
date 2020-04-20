@@ -9,6 +9,8 @@
 #include <QDebug>
 #include <QPointF>
 #include <QPaintEvent>
+#include <QTimerEvent>
+#include <QDateTime>
 
 #include <math.h>
 #include <stdlib.h>
@@ -20,8 +22,10 @@ CoronaField::CoronaField(QWidget *parent) : QWidget(parent)
     valueMenschen=0;
     valueInfizierte=0;
     valueAktive = 0;
-    QTimer *spielfigurTimer = new QTimer();
+    spielfigurTimer = new QTimer(this);
     connect(spielfigurTimer,SIGNAL(timeout()),this, SLOT(moveSpielfiguren()));
+    mRunning = false;
+    mDiff = "0:0:0:0";
 }
 
 void CoronaField::setValueMenschen(int newValue){
@@ -64,17 +68,20 @@ void CoronaField::setValueInfizierte(int newValue){
 }
 
 void CoronaField::setValueAktive(int newValue){
-    int anzahl = round(ValueMenschen()*0.01*newValue);
-    qDebug() << anzahl;
     int differenz = valueAktive-newValue;
+    int anzahl = 0;
     if(differenz>0){
+        anzahl = round(ValueMenschen()*0.01*differenz);
         for(int i=0;i<anzahl;i++){
-        spielfigurList[i]->removeMovable();
+        spielfigurList[i]->removeActive();
+        qDebug()<<spielfigurList[i]->isActive();
         }
     }
     if(differenz<0){
+        anzahl = round(ValueMenschen()*0.01*newValue);
         for(int i=0;i<anzahl;i++){
-            spielfigurList[i]->movable();
+            spielfigurList[i]->active();
+            qDebug()<<spielfigurList[i]->isActive();
         }
     }
     valueAktive = newValue;
@@ -130,6 +137,23 @@ void CoronaField::paintEvent(QPaintEvent */*event*/)
     paintSpielfiguren(painter);
 }
 
+void CoronaField::timerEvent(QTimerEvent *)
+{
+    if(mRunning)
+    {
+        qint64 ms = mStartTime.msecsTo(QDateTime::currentDateTime());
+        int h = ms / 1000 / 60 / 60;
+        int m = (ms / 1000 / 60) - (h * 60);
+        int s = (ms / 1000) - (m * 60);
+        ms = ms - (s * 1000);
+        mDiff = QString("%1:%2:%3:%4").arg(h).arg(m).arg(s).arg(ms);
+    }
+}
+
+QString CoronaField::isStoppwatch() const{
+    return mDiff;
+}
+
 void CoronaField::paintSpielfiguren(QPainter &painter)
 {
     for(Spielfigur *spielfigur : spielfigurList) {
@@ -146,18 +170,55 @@ void CoronaField::paintSpielfiguren(QPainter &painter)
 
 void CoronaField::moveSpielfiguren(){
     for(Spielfigur *spielfigur : spielfigurList) {
-        spielfigur->move();
+            spielfigur->move();
+            if(spielfigur->Pos.y() + 10 > height() || spielfigur->Pos.y() - 10 < 0) {
+                int direction = spielfigur->isDirection();
+                if(direction==1){
+                    spielfigur->changeDirection(0);
+                }
+                else{
+                    spielfigur->changeDirection(1);
+                }
+                continue;
+            }
+            if(spielfigur->Pos.x() + 10 > width() || spielfigur->Pos.x() - 10 < 0) {
+                int direction = spielfigur->isDirection();
+                if(direction==1){
+                    spielfigur->changeDirection(0);
+                }
+                else{
+                    spielfigur->changeDirection(1);
+                }
+            }
+            for(Spielfigur *kollision : spielfigurList) {
+                int direction = spielfigur->isDirection();
+                if(spielfigur != kollision && (spielfigur->Pos - kollision->Pos).manhattanLength() < 20) {
+                    if(direction==1){
+                        spielfigur->changeDirection(0);
+                    }
+                    else{
+                        spielfigur->changeDirection(1);
+                    }
+                    if(spielfigur->isInfected())
+                        kollision->infect();
+                }
+            }
     }
 }
 
 void CoronaField::startSimulation(){
+    mStartTime = QDateTime::currentDateTime();
+    mRunning = true;
     if(ValueMenschen()==0){
         return;
     }
-    //spielfigurTimer->setInterval(15);
+    else{
     spielfigurTimer->start(15);
+    update();
+    }
 }
 
 void CoronaField::stopSimulation(){
+    mRunning = false;
     spielfigurTimer->stop();
 }

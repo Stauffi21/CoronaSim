@@ -75,19 +75,6 @@
      </widget>
     </item>
     <item>
-     <spacer name="verticalSpacer">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>40</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item>
      <widget class="QLabel" name="label_4">
       <property name="text">
        <string>Anzahl Menschen</string>
@@ -138,12 +125,9 @@
      </widget>
     </item>
     <item>
-     <widget class="QLCDNumber" name="time">
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>50</height>
-       </size>
+     <widget class="QLabel" name="stoppwatch">
+      <property name="text">
+       <string/>
       </property>
      </widget>
     </item>

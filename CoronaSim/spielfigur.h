@@ -5,6 +5,7 @@
 #include <QPointF>
 #include <QPainter>
 #include <QRectF>
+#include <math.h>
 
 class Spielfigur : public QObject
 {
@@ -14,21 +15,27 @@ public:
 
     QRectF BoundingRect() const;
     QPointF Pos;
+
     bool isInfected() const;
     void infect();
     void removeInfect();
-    bool isMovable() const;
-    void movable();
-    void removeMovable();
+
+    bool isActive() const;
+    void active();
+    void removeActive();
+
     void move();
+    int isDirection() const;
+    void changeDirection(int direction);
 signals:
 
 public slots:
 
 private:
-    QRectF *HitBox;
+    QRectF *Rect;
     bool IsInfected;
-    bool IsMovable;
+    bool IsActive;
+    int randomDirection;
 };
 
 #endif // SPIELFIGUR_H
