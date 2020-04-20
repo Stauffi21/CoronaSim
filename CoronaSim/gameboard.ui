@@ -128,7 +128,14 @@
      </widget>
     </item>
     <item>
-     <widget class="QSpinBox" name="aktive"/>
+     <widget class="QSpinBox" name="aktive">
+      <property name="maximum">
+       <number>100</number>
+      </property>
+      <property name="singleStep">
+       <number>10</number>
+      </property>
+     </widget>
     </item>
     <item>
      <widget class="QLCDNumber" name="time">

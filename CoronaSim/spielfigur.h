@@ -17,6 +17,10 @@ public:
     bool isInfected() const;
     void infect();
     void removeInfect();
+    bool isMovable() const;
+    void movable();
+    void removeMovable();
+    void move();
 signals:
 
 public slots:
@@ -24,6 +28,7 @@ public slots:
 private:
     QRectF *HitBox;
     bool IsInfected;
+    bool IsMovable;
 };
 
 #endif // SPIELFIGUR_H

@@ -21,7 +21,7 @@ CoronaField::CoronaField(QWidget *parent) : QWidget(parent)
     valueInfizierte=0;
     valueAktive = 0;
     QTimer *spielfigurTimer = new QTimer();
-    spielfigurTimer->setInterval(15);
+    connect(spielfigurTimer,SIGNAL(timeout()),this, SLOT(moveSpielfiguren()));
 }
 
 void CoronaField::setValueMenschen(int newValue){
@@ -44,8 +44,8 @@ void CoronaField::setValueMenschen(int newValue){
 }
 
 void CoronaField::setValueInfizierte(int newValue){
-    if(valueMenschen==0||newValue>=valueMenschen){
-        valueInfizierte=valueMenschen;
+    if(valueMenschen==0||newValue>valueMenschen){
+        newValue=valueMenschen;
     }
     int differenz = valueInfizierte-newValue;
     if(differenz>0){
@@ -64,18 +64,31 @@ void CoronaField::setValueInfizierte(int newValue){
 }
 
 void CoronaField::setValueAktive(int newValue){
+    int anzahl = round(ValueMenschen()*0.01*newValue);
+    qDebug() << anzahl;
+    int differenz = valueAktive-newValue;
+    if(differenz>0){
+        for(int i=0;i<anzahl;i++){
+        spielfigurList[i]->removeMovable();
+        }
+    }
+    if(differenz<0){
+        for(int i=0;i<anzahl;i++){
+            spielfigurList[i]->movable();
+        }
+    }
     valueAktive = newValue;
 }
 
-int CoronaField::ValueMenschen(){
+int CoronaField::ValueMenschen() const{
     return valueMenschen;
 }
 
-int CoronaField::ValueInfizierte(){
+int CoronaField::ValueInfizierte() const{
     return valueInfizierte;
 }
 
-int CoronaField::ValueAktive(){
+int CoronaField::ValueAktive() const{
     return valueAktive;
 }
 
@@ -88,7 +101,6 @@ void CoronaField::createSpielfigur(){
     bool beruerung = false;
     int versuche = 0;
     QPointF startPosition;
-    //float x = float(zufallsZahl(-20,20)) / 10;
     do {
             versuche += 1;
             beruerung = false;
@@ -123,7 +135,6 @@ void CoronaField::paintSpielfiguren(QPainter &painter)
     for(Spielfigur *spielfigur : spielfigurList) {
         painter.save();
         painter.setPen(Qt::NoPen);
-        //spielfigur->paintSpielfigur(painter);
         if(spielfigur->isInfected())
             painter.setBrush(Qt::red);
         else
@@ -131,4 +142,22 @@ void CoronaField::paintSpielfiguren(QPainter &painter)
         painter.drawEllipse(spielfigur->BoundingRect());
         painter.restore();
     }
+}
+
+void CoronaField::moveSpielfiguren(){
+    for(Spielfigur *spielfigur : spielfigurList) {
+        spielfigur->move();
+    }
+}
+
+void CoronaField::startSimulation(){
+    if(ValueMenschen()==0){
+        return;
+    }
+    //spielfigurTimer->setInterval(15);
+    spielfigurTimer->start(15);
+}
+
+void CoronaField::stopSimulation(){
+    spielfigurTimer->stop();
 }

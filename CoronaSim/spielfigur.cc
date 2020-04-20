@@ -8,6 +8,7 @@ Spielfigur::Spielfigur(QPointF xy)
     //myForce = 4 - fabs(randXForce);
     HitBox = new QRectF(0, 0, 20, 20);
     IsInfected = false;
+    IsMovable = false;
 }
 
 QRectF Spielfigur::BoundingRect() const
@@ -21,12 +22,35 @@ bool Spielfigur::isInfected() const
     return IsInfected;
 }
 
+bool Spielfigur::isMovable() const
+{
+    return IsMovable;
+}
+
 void Spielfigur::infect()
 {
     IsInfected = true;
 }
 
+void Spielfigur::movable(){
+    IsMovable = true;
+}
+
 void Spielfigur::removeInfect()
 {
     IsInfected = false;
+}
+
+void Spielfigur::removeMovable(){
+    IsMovable = false;
+}
+
+void Spielfigur::move(){
+    if(IsMovable){
+        Pos.setX(Pos.x()+1);
+        Pos.setY(Pos.y()+1);
+    }
+    else{
+        return;
+    }
 }

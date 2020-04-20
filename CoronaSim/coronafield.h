@@ -19,9 +19,9 @@ public:
     void setValueMenschen(int newValue);
     void setValueInfizierte(int newValue);
     void setValueAktive(int newValue);
-    int ValueMenschen();
-    int ValueInfizierte();
-    int ValueAktive();
+    int ValueMenschen() const;
+    int ValueInfizierte() const;
+    int ValueAktive() const;
 
 protected:
     void paintEvent(QPaintEvent *);
@@ -41,6 +41,11 @@ private:
 signals:
 
 public slots:
+    void startSimulation();
+    void stopSimulation();
+
+private slots:
+    void moveSpielfiguren();
 };
 
 #endif // CORONAFIELD_H
