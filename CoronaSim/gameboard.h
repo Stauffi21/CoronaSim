@@ -22,12 +22,12 @@ private:
     CoronaField *pCoronaField;
 
 private slots:
-    void stop();
     void reset();
     void anzMenschen(int i);
     void anzInfizierte(int i);
     void anzAktive(int i);
     void startSimulation();
+    void stopSimulation();
 };
 
 #endif // GAMEBOARD_H

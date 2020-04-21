@@ -2,13 +2,15 @@
 #include "QDebug"
 #include <math.h>
 
-Spielfigur::Spielfigur(QPointF xy)
+Spielfigur::Spielfigur(QPointF xy,float speedXY)
 {
     Pos = xy;
     Rect = new QRectF(0, 0, 20, 20);
     IsInfected = false;
     IsActive = false;
     randomDirection = qrand()%2;
+    speedX = speedXY;
+    speedY = speedXY;
 }
 
 QRectF Spielfigur::BoundingRect() const
@@ -50,23 +52,29 @@ void Spielfigur::move(){
         return;
     }
     if(randomDirection == 0){
-        Pos.setX(Pos.x()+1);
-        Pos.setY(Pos.y()+1);
+        Pos.setX(Pos.x()+speedX);
+        Pos.setY(Pos.y()+speedY);
         qDebug()<<BoundingRect();
         qDebug()<<randomDirection;
     }
     if(randomDirection == 1){
-        Pos.setX(Pos.x()-1);
-        Pos.setY(Pos.y()-1);
+        Pos.setX(Pos.x()-speedX);
+        Pos.setY(Pos.y()-speedY);
         qDebug()<<BoundingRect();
         qDebug()<<randomDirection;
     }
 }
 
-int Spielfigur::isDirection() const{
-    return randomDirection;
+void Spielfigur::changeDirection(bool horizontal){
+    if(horizontal){
+        speedX *= -1;
+    }
+    else{
+        speedY *= -1;
+    }
+
 }
 
-void Spielfigur::changeDirection(int direction){
-    randomDirection = direction;
+int Spielfigur::isDirection() const{
+    return randomDirection;
 }

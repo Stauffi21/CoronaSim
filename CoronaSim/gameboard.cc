@@ -10,10 +10,10 @@ gameboard::gameboard(QWidget *parent) :
     ui->infizierte->setDisabled(true);
     ui->aktive->setDisabled(true);
     pCoronaField = new CoronaField();
-    ui->stoppwatch->setText(pCoronaField->isStoppwatch());
     ui->gridLayout->addWidget(pCoronaField);
+    connect(pCoronaField, SIGNAL(dataTick(int)), this, SLOT(onTick(int)));
     connect(ui->start,SIGNAL(clicked()),this,SLOT(startSimulation()));
-    //connect(ui->stop,SIGNAL(clicked()),this,SLOT(stopSimulation()));
+    connect(ui->stop,SIGNAL(clicked()),this,SLOT(stopSimulation()));
     connect(ui->menschen,SIGNAL(valueChanged(int)),this, SLOT(anzMenschen(int)));
     connect(ui->infizierte,SIGNAL(valueChanged(int)),this, SLOT(anzInfizierte(int)));
     connect(ui->aktive,SIGNAL(valueChanged(int)),this, SLOT(anzAktive(int)));
@@ -23,10 +23,6 @@ gameboard::~gameboard()
 {
     delete ui;
 }
-
-void gameboard::stop(){}
-
-void gameboard::reset(){}
 
 void gameboard::anzMenschen(int i){
     int newValue=i;
@@ -58,3 +54,9 @@ void gameboard::anzAktive(int i){
 void gameboard::startSimulation(){
     pCoronaField->startSimulation();
 }
+
+void gameboard::stopSimulation(){
+    pCoronaField->stopSimulation();
+}
+
+void gameboard::reset(){}

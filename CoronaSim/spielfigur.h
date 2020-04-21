@@ -11,7 +11,7 @@ class Spielfigur : public QObject
 {
     Q_OBJECT
 public:
-    Spielfigur(QPointF xy);
+    Spielfigur(QPointF xy, float speedXY);
 
     QRectF BoundingRect() const;
     QPointF Pos;
@@ -26,7 +26,7 @@ public:
 
     void move();
     int isDirection() const;
-    void changeDirection(int direction);
+    void changeDirection(bool horizontal);
 signals:
 
 public slots:
@@ -36,6 +36,8 @@ private:
     bool IsInfected;
     bool IsActive;
     int randomDirection;
+    float speedX;
+    float speedY;
 };
 
 #endif // SPIELFIGUR_H

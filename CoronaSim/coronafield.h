@@ -8,7 +8,6 @@
 #include <QTimer>
 #include <QResizeEvent>
 #include <QPaintEvent>
-#include <QTimerEvent>
 #include <QDateTime>
 
 #include "spielfigur.h"
@@ -24,27 +23,24 @@ public:
     int ValueMenschen() const;
     int ValueInfizierte() const;
     int ValueAktive() const;
-    QString isStoppwatch() const;
 
 protected:
     void paintEvent(QPaintEvent *);
-    void timerEvent(QTimerEvent *);
 
 private:
     int zufallsZahl(int low, int high);
     void createSpielfigur();
     void deleteSpielfigur();
-
     void paintSpielfiguren(QPainter &painter);
+
     QTimer *spielfigurTimer;
     QTimer *stopTimer;
+    QTimer *updateTimer;
     QDateTime mStartTime;
     QList<Spielfigur *> spielfigurList;
     int valueMenschen;
     int valueInfizierte;
     int valueAktive;
-    QString mDiff;
-    bool mRunning;
 
 signals:
 
