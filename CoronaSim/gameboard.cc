@@ -25,6 +25,7 @@ gameboard::gameboard(QWidget *parent) :
     connect(ui->menschen,SIGNAL(valueChanged(int)),this, SLOT(anzMenschen(int)));
     connect(ui->infizierte,SIGNAL(valueChanged(int)),this, SLOT(anzInfizierte(int)));
     connect(ui->aktive,SIGNAL(valueChanged(int)),this, SLOT(anzAktive(int)));
+    connect(ui->sterbensrate,SIGNAL(valueChanged(double)),this, SLOT(anzSterben(double)));
 }
 
 gameboard::~gameboard()
@@ -57,6 +58,9 @@ void gameboard::anzAktive(int newValue){
     pCoronaField->setValueAktive(newValue);
 }
 
+void gameboard::anzSterben(double newValue){
+    pCoronaField->setValueSterben(newValue);
+}
 void gameboard::startSimulation(){
     pCoronaField->startSimulation();
     timer->start();

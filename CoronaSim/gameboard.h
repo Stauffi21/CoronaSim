@@ -29,9 +29,10 @@ private:
     QTimer *timer;
 
 private slots:
-    void anzMenschen(int i);
-    void anzInfizierte(int i);
-    void anzAktive(int i);
+    void anzMenschen(int newValue);
+    void anzInfizierte(int newValue);
+    void anzAktive(int newValue);
+    void anzSterben(double newValue);
     void startSimulation();
     void stopSimulation();
     void resetSimulation();

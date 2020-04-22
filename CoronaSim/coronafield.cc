@@ -30,6 +30,7 @@ CoronaField::CoronaField(QWidget *parent) : QWidget(parent)
     valueMenschen=0;
     valueInfizierte=0;
     valueAktive = 0;
+    sterbensrate = 0.0;
 
     spielfigurTimer = new QTimer(this);
     spielfigurTimer->setInterval(15);
@@ -103,6 +104,10 @@ void CoronaField::setValueAktive(int newValue){
     valueAktive = newValue;
 }
 
+void CoronaField::setValueSterben(double newValue){
+    newValue = sterbensrate;
+}
+
 int CoronaField::ValueMenschen() const{
     return valueMenschen;
 }
@@ -113,6 +118,10 @@ int CoronaField::ValueInfizierte() const{
 
 int CoronaField::ValueAktive() const{
     return valueAktive;
+}
+
+double CoronaField::ValueSterben()const {
+    return sterbensrate;
 }
 
 int CoronaField::zufallsZahl(int low, int high)
@@ -129,7 +138,7 @@ void CoronaField::createSpielfigur(){
         beruerung = false;
         startPosition = QPointF(zufallsZahl(25, width() - 25), zufallsZahl(25, height() - 25));
         for(Spielfigur *spielfigur : spielfigurList) {
-            if((startPosition - spielfigur->Pos).manhattanLength() < 40) {
+            if((startPosition - spielfigur->isPos()).manhattanLength() < 40) {
                 beruerung = true;
                 break;
             }
@@ -170,22 +179,16 @@ void CoronaField::paintSpielfiguren(QPainter &painter)
 void CoronaField::moveSpielfiguren(){
     for(Spielfigur *spielfigur : spielfigurList) {
         spielfigur->move();
-        if(spielfigur->Pos.y() + 10 > height() || spielfigur->Pos.y() - 10 < 0) {
+        if(spielfigur->isPos().y() + 12.5 > height() || spielfigur->isPos().y() - 12.5 < 0) {
             spielfigur->changeSpeed(false);
             continue;
         }
-        if(spielfigur->Pos.x() + 10 > width() || spielfigur->Pos.x() - 10 < 0) {
+        if(spielfigur->isPos().x() + 12.5 > width() || spielfigur->isPos().x() - 12.5 < 0) {
             spielfigur->changeSpeed(true);
         }
         for(Spielfigur *kollision : spielfigurList) {
-            int direction = spielfigur->isDirection();
-            if(spielfigur != kollision && (spielfigur->Pos - kollision->Pos).manhattanLength() < 22.5) {
-                if(direction==1){
-                    spielfigur->changeDirection(0);
-                }
-                else{
-                    spielfigur->changeDirection(1);
-                }
+            if(spielfigur != kollision && (spielfigur->isPos() - kollision->isPos()).manhattanLength() < 22.5) {
+                spielfigur->changeDirection(qrand()%5);
                 if(spielfigur->isInfected())
                     kollision->infect();
             }

@@ -9,7 +9,6 @@
 #include <QResizeEvent>
 #include <QPaintEvent>
 #include <QDateTime>
-#include <QString>
 
 #include "spielfigur.h"
 
@@ -21,9 +20,11 @@ public:
     void setValueMenschen(int newValue);
     void setValueInfizierte(int newValue);
     void setValueAktive(int newValue);
+    void setValueSterben(double newValue);
     int ValueMenschen() const;
     int ValueInfizierte() const;
     int ValueAktive() const;
+    double ValueSterben() const;
     void resetSimulation(int resetMenschen, int resetInfizierte, int resetAktive);
 
 protected:
@@ -42,6 +43,7 @@ private:
     int valueMenschen;
     int valueInfizierte;
     int valueAktive;
+    double sterbensrate;
 
 signals:
 

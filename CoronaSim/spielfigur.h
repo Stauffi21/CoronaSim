@@ -13,8 +13,8 @@ class Spielfigur : public QObject
 public:
     Spielfigur(QPointF xy, float speedXY);
 
-    QRectF BoundingRect() const;
-    QPointF Pos;
+    QRectF BoundingRect();
+    QPointF isPos();
 
     bool isInfected() const;
     void infect();
@@ -28,17 +28,20 @@ public:
     int isDirection() const;
     void changeSpeed(bool horizontal);
     void changeDirection(int direction);
+    int isAlter() const;
 signals:
 
 public slots:
 
 private:
-    QRectF *Rect;
+    QRectF Rect;
+    QPointF Pos;
     bool IsInfected;
     bool IsActive;
     int randomDirection;
     float speedX;
     float speedY;
+    int randomAlter;
 };
 
 #endif // SPIELFIGUR_H
