@@ -2,6 +2,9 @@
 #define GAMEBOARD_H
 
 #include <QWidget>
+#include <QTime>
+#include <QTimer>
+#include <QElapsedTimer>
 
 class CoronaField;
 
@@ -20,14 +23,19 @@ public:
 private:
     Ui::gameboard *ui;
     CoronaField *pCoronaField;
+    QTime *time;
+    QElapsedTimer *elapsedTimer;
+    int simulationStopped;
+    QTimer *timer;
 
 private slots:
-    void reset();
     void anzMenschen(int i);
     void anzInfizierte(int i);
     void anzAktive(int i);
     void startSimulation();
     void stopSimulation();
+    void resetSimulation();
+    void showTime();
 };
 
 #endif // GAMEBOARD_H

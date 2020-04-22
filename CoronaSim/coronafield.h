@@ -9,6 +9,7 @@
 #include <QResizeEvent>
 #include <QPaintEvent>
 #include <QDateTime>
+#include <QString>
 
 #include "spielfigur.h"
 
@@ -23,6 +24,7 @@ public:
     int ValueMenschen() const;
     int ValueInfizierte() const;
     int ValueAktive() const;
+    void resetSimulation(int resetMenschen, int resetInfizierte, int resetAktive);
 
 protected:
     void paintEvent(QPaintEvent *);
@@ -34,9 +36,8 @@ private:
     void paintSpielfiguren(QPainter &painter);
 
     QTimer *spielfigurTimer;
-    QTimer *stopTimer;
     QTimer *updateTimer;
-    QDateTime mStartTime;
+    QTimer *updateTimerDaten;
     QList<Spielfigur *> spielfigurList;
     int valueMenschen;
     int valueInfizierte;

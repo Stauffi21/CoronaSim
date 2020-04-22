@@ -9,6 +9,7 @@
 #include <QDebug>
 #include <QPointF>
 #include <QPaintEvent>
+#include <QString>
 
 #include <math.h>
 #include <stdlib.h>
@@ -19,6 +20,10 @@ CoronaField::CoronaField(QWidget *parent) : QWidget(parent)
     updateTimer->setInterval(1000/17);
     connect(updateTimer, SIGNAL(timeout()), this, SLOT(update()));
 
+    updateTimerDaten = new QTimer(this);
+    updateTimer->setInterval(10);
+
+    setMinimumSize(600, 400);
     setPalette(QPalette(QColor(255,255,255)));
     setAutoFillBackground(true);
 
@@ -46,6 +51,11 @@ void CoronaField::setValueMenschen(int newValue){
             createSpielfigur();
         }
     }
+    if(differenz==0){
+        for(int i=0;i<newValue;i++){
+            createSpielfigur();
+        }
+    }
     valueMenschen = newValue;
 
 }
@@ -63,6 +73,12 @@ void CoronaField::setValueInfizierte(int newValue){
     }
     if(differenz<0){
         for(int i=valueInfizierte;i<newValue;i++){
+            spielfigurList[i]->infect();
+            update();
+        }
+    }
+    if(differenz==0){
+        for(int i=0;i<newValue;i++){
             spielfigurList[i]->infect();
             update();
         }
@@ -155,15 +171,15 @@ void CoronaField::moveSpielfiguren(){
     for(Spielfigur *spielfigur : spielfigurList) {
         spielfigur->move();
         if(spielfigur->Pos.y() + 10 > height() || spielfigur->Pos.y() - 10 < 0) {
-            spielfigur->changeDirection(false);
+            spielfigur->changeSpeed(false);
             continue;
         }
         if(spielfigur->Pos.x() + 10 > width() || spielfigur->Pos.x() - 10 < 0) {
-            spielfigur->changeDirection(true);
+            spielfigur->changeSpeed(true);
         }
         for(Spielfigur *kollision : spielfigurList) {
             int direction = spielfigur->isDirection();
-            if(spielfigur != kollision && (spielfigur->Pos - kollision->Pos).manhattanLength() < 21) {
+            if(spielfigur != kollision && (spielfigur->Pos - kollision->Pos).manhattanLength() < 22.5) {
                 if(direction==1){
                     spielfigur->changeDirection(0);
                 }
@@ -191,4 +207,17 @@ void CoronaField::stopSimulation(){
     spielfigurTimer->stop();
     updateTimer->stop();
     update();
+}
+
+void CoronaField::resetSimulation(int resetMenschen, int resetInfizierte, int resetAktive){
+    spielfigurTimer->stop();
+    updateTimer->stop();
+    valueMenschen = resetMenschen;
+    valueInfizierte = resetInfizierte;
+    valueAktive = resetAktive;
+    qDeleteAll(spielfigurList);
+    spielfigurList.clear();
+    this->setValueMenschen(valueMenschen);
+    this->setValueInfizierte(valueInfizierte);
+    this->setValueAktive(valueAktive);
 }

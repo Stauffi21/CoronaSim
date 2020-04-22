@@ -65,14 +65,17 @@ void Spielfigur::move(){
     }
 }
 
-void Spielfigur::changeDirection(bool horizontal){
+void Spielfigur::changeSpeed(bool horizontal){
     if(horizontal){
         speedX *= -1;
     }
     else{
         speedY *= -1;
     }
+}
 
+void Spielfigur::changeDirection(int direction){
+    randomDirection = direction;
 }
 
 int Spielfigur::isDirection() const{

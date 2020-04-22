@@ -26,7 +26,8 @@ public:
 
     void move();
     int isDirection() const;
-    void changeDirection(bool horizontal);
+    void changeSpeed(bool horizontal);
+    void changeDirection(int direction);
 signals:
 
 public slots:
