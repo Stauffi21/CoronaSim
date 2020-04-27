@@ -59,6 +59,7 @@ public slots:
 private slots:
     void moveSpielfiguren();
     void showInfizierte();
+    void checkAlive();
 };
 
 #endif // CORONAFIELD_H

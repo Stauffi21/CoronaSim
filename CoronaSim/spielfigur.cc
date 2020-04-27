@@ -1,8 +1,9 @@
 #include "spielfigur.h"
 #include "QDebug"
 #include <math.h>
+#include <QTimer>
 
-Spielfigur::Spielfigur(QPointF xy,float speedXY)
+Spielfigur::Spielfigur(QPointF xy,float speedXY,double sterben)
 {
     Pos = xy;
     Rect = QRectF(0, 0, 20, 20);
@@ -11,8 +12,10 @@ Spielfigur::Spielfigur(QPointF xy,float speedXY)
     randomDirection = qrand()%5;
     speedX = speedXY;
     speedY = speedXY;
-    randomAlter = (qrand()% ((99+1)-1)) + 1;
-    //qDebug() << randomDirection;
+    randomAlter = (qrand()% ((99+0)-0)) + 0;
+    //qDebug() << randomAlter;
+    this->setSterbensrate(sterben);
+    alive = true;
 }
 
 QRectF Spielfigur::BoundingRect()
@@ -98,4 +101,62 @@ int Spielfigur::isDirection() const{
 
 int Spielfigur::isAlter() const{
     return randomAlter;
+}
+
+void Spielfigur::setSterbensrate(double newValue){
+
+    if(isAlter()<40){
+        sterbensrate = newValue/16;
+    }
+    else if(isAlter()<50){
+        sterbensrate = newValue/8.0;
+    }
+    else if(isAlter()<60){
+        sterbensrate = newValue/2.46;
+    }
+    else if(isAlter()<70){
+        sterbensrate = newValue/0.89;
+    }
+    else if(isAlter()<80){
+        sterbensrate = newValue/0.4;
+    }
+    else if(isAlter()<100){
+        sterbensrate = newValue/0.22;
+    }
+    if(sterbensrate>=100){
+        sterbensrate = 100;
+    }
+    //qDebug() << sterbensrate;
+}
+
+double Spielfigur::Sterbensrate() const{
+    return sterbensrate;
+}
+
+void Spielfigur::setAlive(){
+    double wahrscheinlichkeit = 100-sterbensrate;
+    //qDebug() << wahrscheinlichkeit;
+    std::random_device generator;
+    std::uniform_int_distribution<int> distribution(0,100);
+    int val = distribution(generator);
+    qDebug() << val;
+    int random;
+    if(val < (wahrscheinlichkeit*0.01)){
+        random = 0;
+    }
+    else if(val<(sterbensrate)){
+        random = 1;
+    }
+
+    if(random == 0){
+        return;
+    }
+    else if(random ==1){
+        this->removeInfect();
+        alive = false;
+    }
+}
+
+bool Spielfigur::isAlive(){
+    return alive;
 }

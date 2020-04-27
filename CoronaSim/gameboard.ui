@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>900</width>
+    <width>1000</width>
     <height>700</height>
    </rect>
   </property>
@@ -18,7 +18,7 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>900</width>
+    <width>1000</width>
     <height>700</height>
    </size>
   </property>
@@ -365,7 +365,7 @@
         </font>
        </property>
        <property name="text">
-        <string>Sterbensrate (in %)</string>
+        <string>Mittelwert der Sterbensraten (in %) nach Alter</string>
        </property>
       </widget>
      </item>
@@ -380,8 +380,14 @@
        <property name="decimals">
         <number>1</number>
        </property>
+       <property name="maximum">
+        <double>50.000000000000000</double>
+       </property>
        <property name="singleStep">
         <double>0.100000000000000</double>
+       </property>
+       <property name="value">
+        <double>3.200000000000000</double>
        </property>
       </widget>
      </item>

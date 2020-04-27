@@ -26,6 +26,7 @@ gameboard::gameboard(QWidget *parent) :
     connect(ui->sterbensrate,SIGNAL(valueChanged(double)),this, SLOT(anzSterben(double)));
     connect(pCoronaField,SIGNAL(infziert()),this, SLOT(showInfizierte()));
     connect(pCoronaField,SIGNAL(stop()),this, SLOT(stopSimulation()));
+    pCoronaField->setValueSterben(3.2);
     pCoronaField->setValueMenschen(4);
     pCoronaField->setValueInfizierte(1);
     pCoronaField->setGesamtInfizierte(1);

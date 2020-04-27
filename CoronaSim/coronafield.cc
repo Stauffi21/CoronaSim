@@ -16,6 +16,8 @@
 
 CoronaField::CoronaField(QWidget *parent) : QWidget(parent)
 {
+    QTime time = QTime::currentTime();
+    qsrand((uint)time.msec());
     updateTimer = new QTimer(this);
     updateTimer->setInterval(1000/17);
     connect(updateTimer, SIGNAL(timeout()), this, SLOT(update()));
@@ -30,13 +32,14 @@ CoronaField::CoronaField(QWidget *parent) : QWidget(parent)
     valueMenschen=0;
     valueInfizierte=0;
     valueAktive = 0;
-    sterbensrate = 0.0;
+    sterbensrate = 0;
     gesamtInfizierte = 0;
 
     spielfigurTimer = new QTimer(this);
     spielfigurTimer->setInterval(15);
     connect(spielfigurTimer,SIGNAL(timeout()),this, SLOT(moveSpielfiguren()));
     connect(spielfigurTimer,SIGNAL(timeout()),this, SLOT(showInfizierte()));
+    connect(spielfigurTimer,SIGNAL(timeout()),this, SLOT(checkAlive()));
 }
 
 void CoronaField::setValueMenschen(int newValue){
@@ -107,7 +110,12 @@ void CoronaField::setValueAktive(int newValue){
 }
 
 void CoronaField::setValueSterben(double newValue){
-    newValue = sterbensrate;
+    sterbensrate = newValue;
+    if(!spielfigurList.isEmpty()){
+        for(Spielfigur *spielfigur : spielfigurList) {
+            spielfigur->setSterbensrate(sterbensrate);
+        }
+    }
 }
 
 int CoronaField::ValueMenschen() const{
@@ -147,7 +155,7 @@ void CoronaField::createSpielfigur(){
         }
     } while(beruerung && versuche < 150);
     if(!beruerung) {
-        Spielfigur *newSpielfigur = new Spielfigur(startPosition,1);
+        Spielfigur *newSpielfigur = new Spielfigur(startPosition,1,ValueSterben());
         spielfigurList.append(newSpielfigur);
         update();
     }
@@ -176,9 +184,12 @@ void CoronaField::paintSpielfiguren(QPainter &painter)
             painter.save();
             painter.setPen(Qt::NoPen);
             if(spielfigur->isInfected())
-                painter.setBrush(Qt::red);
-            else
-                painter.setBrush(Qt::black);
+                painter.setBrush(Qt::green);
+            else if(!spielfigur->isAlive()){
+                painter.setBrush(Qt::gray);
+            }
+            else{
+                painter.setBrush(Qt::black);}
             painter.drawEllipse(spielfigur->BoundingRect());
             painter.restore();
         }}
@@ -186,6 +197,9 @@ void CoronaField::paintSpielfiguren(QPainter &painter)
 
 void CoronaField::moveSpielfiguren(){
     for(Spielfigur *spielfigur : spielfigurList) {
+        if(!spielfigur->isAlive()){
+            spielfigur->removeActive();
+        }
         spielfigur->move();
         if(spielfigur->isPos().y() + 12.5 > height() || spielfigur->isPos().y() - 12.5 < 0) {
             spielfigur->changeSpeed(false);
@@ -197,7 +211,7 @@ void CoronaField::moveSpielfiguren(){
         for(Spielfigur *kollision : spielfigurList) {
             if(spielfigur != kollision && (spielfigur->isPos() - kollision->isPos()).manhattanLength() < 22.5) {
                 spielfigur->changeDirection(qrand()%5);
-                if(spielfigur->isInfected())
+                if(spielfigur->isInfected()&&spielfigur->isAlive())
                     kollision->infect();
             }
         }
@@ -255,4 +269,11 @@ void CoronaField::showInfizierte(){
         stopSimulation();
         emit stop();
     }
+}
+
+void CoronaField::checkAlive(){
+    for(Spielfigur *spielfigur : spielfigurList) {
+        if(spielfigur->isInfected()){
+            spielfigur->setAlive();
+        }}
 }
