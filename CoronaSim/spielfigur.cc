@@ -12,7 +12,7 @@ Spielfigur::Spielfigur(QPointF xy,float speedXY)
     speedX = speedXY;
     speedY = speedXY;
     randomAlter = (qrand()% ((99+1)-1)) + 1;
-    qDebug() << randomDirection;
+    //qDebug() << randomDirection;
 }
 
 QRectF Spielfigur::BoundingRect()

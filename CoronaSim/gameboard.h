@@ -5,6 +5,7 @@
 #include <QTime>
 #include <QTimer>
 #include <QElapsedTimer>
+#include <QString>
 
 class CoronaField;
 
@@ -37,6 +38,7 @@ private slots:
     void stopSimulation();
     void resetSimulation();
     void showTime();
+    void showInfizierte();
 };
 
 #endif // GAMEBOARD_H

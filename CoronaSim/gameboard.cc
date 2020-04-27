@@ -2,6 +2,7 @@
 #include "ui_gameboard.h"
 #include "coronafield.h"
 #include <QTime>
+#include <QString>
 
 gameboard::gameboard(QWidget *parent) :
     QWidget(parent),
@@ -10,9 +11,6 @@ gameboard::gameboard(QWidget *parent) :
     ui->setupUi(this);
     pCoronaField = new CoronaField();
     ui->gridLayout->addWidget(pCoronaField);
-    pCoronaField->setValueMenschen(4);
-    pCoronaField->setValueInfizierte(1);
-    pCoronaField->setValueAktive(20);
     time = new QTime(0,0);
     elapsedTimer = new QElapsedTimer();
     simulationStopped = 0;
@@ -26,6 +24,12 @@ gameboard::gameboard(QWidget *parent) :
     connect(ui->infizierte,SIGNAL(valueChanged(int)),this, SLOT(anzInfizierte(int)));
     connect(ui->aktive,SIGNAL(valueChanged(int)),this, SLOT(anzAktive(int)));
     connect(ui->sterbensrate,SIGNAL(valueChanged(double)),this, SLOT(anzSterben(double)));
+    connect(pCoronaField,SIGNAL(infziert()),this, SLOT(showInfizierte()));
+    connect(pCoronaField,SIGNAL(stop()),this, SLOT(stopSimulation()));
+    pCoronaField->setValueMenschen(4);
+    pCoronaField->setValueInfizierte(1);
+    pCoronaField->setGesamtInfizierte(1);
+    pCoronaField->setValueAktive(20);
 }
 
 gameboard::~gameboard()
@@ -52,6 +56,7 @@ void gameboard::anzMenschen(int newValue){
 void gameboard::anzInfizierte(int newValue){
     pCoronaField->setValueInfizierte(newValue);
     ui->infizierte->setValue(pCoronaField->ValueInfizierte());
+    ui->anz_Infizierte->setText(QString::number(pCoronaField->ValueInfizierte()));
 }
 
 void gameboard::anzAktive(int newValue){
@@ -84,4 +89,9 @@ void gameboard::showTime()
 {
     QString text = time->fromMSecsSinceStartOfDay(elapsedTimer->elapsed()+simulationStopped).toString("mm:ss:zzz");
     ui->stoppwatch->setText(text);
+}
+
+void gameboard::showInfizierte(){
+    QString infizierte = QString::number(pCoronaField->GesamtInfizierte());
+    ui->anz_Infizierte->setText(infizierte);
 }
