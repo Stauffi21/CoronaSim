@@ -1,7 +1,7 @@
 #include "spielfigur.h"
 #include "QDebug"
 #include <math.h>
-#include <QTimer>
+#include <QElapsedTimer>
 
 Spielfigur::Spielfigur(QPointF xy,float speedXY,double sterben)
 {
@@ -13,7 +13,6 @@ Spielfigur::Spielfigur(QPointF xy,float speedXY,double sterben)
     speedX = speedXY;
     speedY = speedXY;
     randomAlter = (qrand()% ((99+0)-0)) + 0;
-    //qDebug() << randomAlter;
     this->setSterbensrate(sterben);
     alive = true;
 }
@@ -82,6 +81,33 @@ void Spielfigur::move(){
     }
 }
 
+void Spielfigur::moveBack(){
+    float alter = randomAlter/100;
+    if(!isActive()){
+        return;
+    }
+    if(randomDirection == 0){
+        Pos.setX(Pos.x()-(speedX-alter));
+        Pos.setY(Pos.y()-(speedY-alter));
+    }
+    if(randomDirection == 1){
+        Pos.setX(Pos.x()+(speedX-alter));
+        Pos.setY(Pos.y()+(speedY-alter));
+    }
+    if(randomDirection == 2){
+        Pos.setX(Pos.x()-(speedX-alter));
+    }
+    if(randomDirection == 3){
+        Pos.setX(Pos.x()+(speedX-alter));
+    }
+    if(randomDirection == 4){
+        Pos.setY(Pos.y()-(speedY-alter));
+    }
+    if(randomDirection == 5){
+        Pos.setY(Pos.y()+(speedY-alter));
+    }
+}
+
 void Spielfigur::changeSpeed(bool horizontal){
     if(horizontal){
         speedX *= -1;
@@ -126,7 +152,6 @@ void Spielfigur::setSterbensrate(double newValue){
     if(sterbensrate>=100){
         sterbensrate = 100;
     }
-    //qDebug() << sterbensrate;
 }
 
 double Spielfigur::Sterbensrate() const{
@@ -135,16 +160,12 @@ double Spielfigur::Sterbensrate() const{
 
 void Spielfigur::setAlive(){
     double wahrscheinlichkeit = 100-sterbensrate;
-    //qDebug() << wahrscheinlichkeit;
-    std::random_device generator;
-    std::uniform_int_distribution<int> distribution(0,100);
-    int val = distribution(generator);
-    qDebug() << val;
-    int random;
+    double val = ((double)(rand()%100)/100.0);
+    int random = 0;
     if(val < (wahrscheinlichkeit*0.01)){
         random = 0;
     }
-    else if(val<(sterbensrate)){
+    else if(val<(sterbensrate*0.01)){
         random = 1;
     }
 
@@ -159,4 +180,8 @@ void Spielfigur::setAlive(){
 
 bool Spielfigur::isAlive(){
     return alive;
+}
+
+void Spielfigur::Alive(){
+    alive = true;
 }

@@ -39,6 +39,7 @@ private slots:
     void resetSimulation();
     void showTime();
     void showInfizierte();
+    void showTote();
 };
 
 #endif // GAMEBOARD_H

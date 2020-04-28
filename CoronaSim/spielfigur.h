@@ -6,7 +6,7 @@
 #include <QPainter>
 #include <QRectF>
 #include <math.h>
-#include <QTimer>
+#include <QElapsedTimer>
 
 class Spielfigur : public QObject
 {
@@ -26,6 +26,7 @@ public:
     void removeActive();
 
     void move();
+    void moveBack();
     int isDirection() const;
     void changeSpeed(bool horizontal);
     void changeDirection(int direction);
@@ -34,6 +35,7 @@ public:
     double Sterbensrate() const;
     bool isAlive();
     void setAlive();
+    void Alive();
 
 signals:
 
@@ -51,6 +53,7 @@ private:
     double sterbensrate;
     bool alive;
     bool simulation;
+    //QElapsedTimer *elapsedTimer;
 };
 
 #endif // SPIELFIGUR_H

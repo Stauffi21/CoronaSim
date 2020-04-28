@@ -22,11 +22,13 @@ public:
     void setValueAktive(int newValue);
     void setValueSterben(double newValue);
     void setGesamtInfizierte(int anzahl);
+    void setGesamtTote(int anzahl);
     int ValueMenschen() const;
     int ValueInfizierte() const;
     int ValueAktive() const;
     double ValueSterben() const;
     int GesamtInfizierte();
+    int GesamtTote();
     void resetSimulation(int resetMenschen, int resetInfizierte, int resetAktive);
 
 protected:
@@ -47,10 +49,14 @@ private:
     int valueAktive;
     double sterbensrate;
     int gesamtInfizierte;
+    void Alive();
+    int gesamtTote;
+    QTimer *statusTimer;
 
 signals:
     void infziert();
     void stop();
+    void tot();
 
 public slots:
     void startSimulation();
@@ -60,6 +66,7 @@ private slots:
     void moveSpielfiguren();
     void showInfizierte();
     void checkAlive();
+    void showTote();
 };
 
 #endif // CORONAFIELD_H

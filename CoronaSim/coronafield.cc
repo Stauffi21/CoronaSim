@@ -34,11 +34,17 @@ CoronaField::CoronaField(QWidget *parent) : QWidget(parent)
     valueAktive = 0;
     sterbensrate = 0;
     gesamtInfizierte = 0;
+    gesamtTote = 0;
 
     spielfigurTimer = new QTimer(this);
     spielfigurTimer->setInterval(15);
     connect(spielfigurTimer,SIGNAL(timeout()),this, SLOT(moveSpielfiguren()));
     connect(spielfigurTimer,SIGNAL(timeout()),this, SLOT(showInfizierte()));
+    connect(spielfigurTimer,SIGNAL(timeout()),this, SLOT(showTote()));
+
+
+    statusTimer = new QTimer(this);
+    statusTimer->setInterval(500);
     connect(spielfigurTimer,SIGNAL(timeout()),this, SLOT(checkAlive()));
 }
 
@@ -174,12 +180,12 @@ void CoronaField::paintEvent(QPaintEvent */*event*/)
 
 void CoronaField::paintSpielfiguren(QPainter &painter)
 {
-    if(GesamtInfizierte()==ValueMenschen()){
+    /*if(GesamtInfizierte()==ValueMenschen()){
         painter.setPen(Qt::black);
         painter.setFont(QFont("Courier", 48, QFont::Bold));
         painter.drawText(rect(), Qt::AlignCenter, tr("Alle Infiziert"));
-    }
-    else{
+    }*/
+
         for(Spielfigur *spielfigur : spielfigurList) {
             painter.save();
             painter.setPen(Qt::NoPen);
@@ -193,7 +199,6 @@ void CoronaField::paintSpielfiguren(QPainter &painter)
             painter.drawEllipse(spielfigur->BoundingRect());
             painter.restore();
         }}
-}
 
 void CoronaField::moveSpielfiguren(){
     for(Spielfigur *spielfigur : spielfigurList) {
@@ -201,17 +206,20 @@ void CoronaField::moveSpielfiguren(){
             spielfigur->removeActive();
         }
         spielfigur->move();
-        if(spielfigur->isPos().y() + 12.5 > height() || spielfigur->isPos().y() - 12.5 < 0) {
+        if(spielfigur->isPos().y() + 10 > height() || spielfigur->isPos().y() - 10 < 0) {
+            spielfigur->moveBack();
             spielfigur->changeSpeed(false);
             continue;
         }
-        if(spielfigur->isPos().x() + 12.5 > width() || spielfigur->isPos().x() - 12.5 < 0) {
+        if(spielfigur->isPos().x() + 10 > width() || spielfigur->isPos().x() - 10 < 0) {
+            spielfigur->moveBack();
             spielfigur->changeSpeed(true);
         }
         for(Spielfigur *kollision : spielfigurList) {
-            if(spielfigur != kollision && (spielfigur->isPos() - kollision->isPos()).manhattanLength() < 22.5) {
+            if(spielfigur != kollision && (spielfigur->isPos() - kollision->isPos()).manhattanLength() < 20) {
+                spielfigur->moveBack();
                 spielfigur->changeDirection(qrand()%5);
-                if(spielfigur->isInfected()&&spielfigur->isAlive())
+                if(spielfigur->isInfected()&&kollision->isAlive())
                     kollision->infect();
             }
         }
@@ -220,6 +228,7 @@ void CoronaField::moveSpielfiguren(){
 
 void CoronaField::startSimulation(){
     updateTimer->start();
+    statusTimer->start();
     if(ValueMenschen()==0){
         return;
     }
@@ -231,12 +240,14 @@ void CoronaField::startSimulation(){
 void CoronaField::stopSimulation(){
     spielfigurTimer->stop();
     updateTimer->stop();
+    statusTimer->stop();
     update();
 }
 
 void CoronaField::resetSimulation(int resetMenschen, int resetInfizierte, int resetAktive){
     spielfigurTimer->stop();
     updateTimer->stop();
+    statusTimer->stop();
     valueMenschen = resetMenschen;
     valueInfizierte = resetInfizierte;
     valueAktive = resetAktive;
@@ -246,6 +257,7 @@ void CoronaField::resetSimulation(int resetMenschen, int resetInfizierte, int re
     this->setValueInfizierte(valueInfizierte);
     this->setGesamtInfizierte(valueInfizierte);
     this->setValueAktive(valueAktive);
+    this->Alive();
 }
 
 void CoronaField::setGesamtInfizierte(int anzahl){
@@ -265,7 +277,7 @@ void CoronaField::showInfizierte(){
             this->setGesamtInfizierte(anzahl);
         }
     }
-    if(anzahl==ValueMenschen()){
+    if(GesamtInfizierte()+GesamtTote()==ValueMenschen()||GesamtInfizierte()==ValueMenschen()){
         stopSimulation();
         emit stop();
     }
@@ -276,4 +288,33 @@ void CoronaField::checkAlive(){
         if(spielfigur->isInfected()){
             spielfigur->setAlive();
         }}
+}
+
+void CoronaField::Alive(){
+    for(Spielfigur *spielfigur : spielfigurList) {
+        spielfigur->Alive();
+    }
+}
+
+void CoronaField::setGesamtTote(int anzahl){
+    gesamtTote = anzahl;
+    emit tot();
+}
+
+int CoronaField::GesamtTote(){
+    return gesamtTote;
+}
+
+void CoronaField::showTote(){
+    int anzahl = 0;
+    for(Spielfigur *spielfigur : spielfigurList) {
+        if(spielfigur->isAlive()==false){
+            anzahl = anzahl+1;
+            this->setGesamtTote(anzahl);
+        }
+    }
+    if(GesamtTote()+GesamtInfizierte()==ValueMenschen()||anzahl==ValueMenschen()){
+        stopSimulation();
+        emit stop();
+    }
 }
