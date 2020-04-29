@@ -1,9 +1,9 @@
 #include "spielfigur.h"
 #include "QDebug"
 #include <math.h>
-#include <QElapsedTimer>
+#include <QTimer>
 
-Spielfigur::Spielfigur(QPointF xy,float speedXY,double sterben)
+Spielfigur::Spielfigur(QPointF xy,float speedXY)
 {
     Pos = xy;
     Rect = QRectF(0, 0, 20, 20);
@@ -13,8 +13,11 @@ Spielfigur::Spielfigur(QPointF xy,float speedXY,double sterben)
     speedX = speedXY;
     speedY = speedXY;
     randomAlter = (qrand()% ((99+0)-0)) + 0;
-    this->setSterbensrate(sterben);
     alive = true;
+    die = false;
+    toDieTimer = new QTimer(this);
+    connect(toDieTimer,SIGNAL(timeout()),this,SLOT(setAlive()));
+    toDieTimer->setSingleShot(true);
 }
 
 QRectF Spielfigur::BoundingRect()
@@ -129,53 +132,20 @@ int Spielfigur::isAlter() const{
     return randomAlter;
 }
 
-void Spielfigur::setSterbensrate(double newValue){
+void Spielfigur::setToDie(bool newValue){
 
-    if(isAlter()<40){
-        sterbensrate = newValue/16;
-    }
-    else if(isAlter()<50){
-        sterbensrate = newValue/8.0;
-    }
-    else if(isAlter()<60){
-        sterbensrate = newValue/2.46;
-    }
-    else if(isAlter()<70){
-        sterbensrate = newValue/0.89;
-    }
-    else if(isAlter()<80){
-        sterbensrate = newValue/0.4;
-    }
-    else if(isAlter()<100){
-        sterbensrate = newValue/0.22;
-    }
-    if(sterbensrate>=100){
-        sterbensrate = 100;
-    }
+    die = newValue;
+    toDieTimer->start(4000);
 }
 
-double Spielfigur::Sterbensrate() const{
-    return sterbensrate;
+bool Spielfigur::toDie() const{
+    return die;
 }
 
 void Spielfigur::setAlive(){
-    double wahrscheinlichkeit = 100-sterbensrate;
-    double val = ((double)(rand()%100)/100.0);
-    int random = 0;
-    if(val < (wahrscheinlichkeit*0.01)){
-        random = 0;
-    }
-    else if(val<(sterbensrate*0.01)){
-        random = 1;
-    }
-
-    if(random == 0){
-        return;
-    }
-    else if(random ==1){
-        this->removeInfect();
-        alive = false;
-    }
+    removeInfect();
+    die = false;
+    alive=false;
 }
 
 bool Spielfigur::isAlive(){

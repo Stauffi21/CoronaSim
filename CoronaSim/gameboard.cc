@@ -43,7 +43,10 @@ gameboard::~gameboard()
 void gameboard::anzMenschen(int newValue){
     pCoronaField->setValueMenschen(newValue);
     pCoronaField->setValueAktive(pCoronaField->ValueAktive());
-    if(pCoronaField->ValueMenschen()==0){
+    if(pCoronaField->ValueMenschen()==pCoronaField->ValueInfizierte()){
+        ui->start->setDisabled(true);
+    }
+    else if(pCoronaField->ValueMenschen()==0){
         ui->infizierte->setDisabled(true);
         ui->aktive->setDisabled(true);
         ui->start->setDisabled(true);
@@ -60,6 +63,12 @@ void gameboard::anzInfizierte(int newValue){
     pCoronaField->setValueInfizierte(newValue);
     ui->infizierte->setValue(pCoronaField->ValueInfizierte());
     ui->anz_Infizierte->setText(QString::number(pCoronaField->ValueInfizierte()));
+    if(pCoronaField->ValueMenschen()==pCoronaField->ValueInfizierte()){
+        ui->start->setDisabled(true);
+    }
+    else{
+        ui->start->setDisabled(false);
+    }
 }
 
 void gameboard::anzAktive(int newValue){

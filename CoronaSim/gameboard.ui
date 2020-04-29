@@ -71,6 +71,9 @@
   <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
     <layout class="QGridLayout" name="gridLayout">
+     <property name="sizeConstraint">
+      <enum>QLayout::SetMaximumSize</enum>
+     </property>
      <property name="rightMargin">
       <number>0</number>
      </property>
@@ -82,7 +85,7 @@
       <number>0</number>
      </property>
      <property name="sizeConstraint">
-      <enum>QLayout::SetDefaultConstraint</enum>
+      <enum>QLayout::SetFixedSize</enum>
      </property>
      <property name="leftMargin">
       <number>0</number>
@@ -368,7 +371,7 @@
         <number>1</number>
        </property>
        <property name="maximum">
-        <double>50.000000000000000</double>
+        <double>100.000000000000000</double>
        </property>
        <property name="singleStep">
         <double>0.100000000000000</double>

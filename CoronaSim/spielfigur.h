@@ -6,13 +6,13 @@
 #include <QPainter>
 #include <QRectF>
 #include <math.h>
-#include <QElapsedTimer>
+#include <QTimer>
 
 class Spielfigur : public QObject
 {
     Q_OBJECT
 public:
-    Spielfigur(QPointF xy, float speedXY, double sterben);
+    Spielfigur(QPointF xy, float speedXY);
 
     QRectF BoundingRect();
     QPointF isPos();
@@ -31,15 +31,18 @@ public:
     void changeSpeed(bool horizontal);
     void changeDirection(int direction);
     int isAlter() const;
-    void setSterbensrate(double newValue);
-    double Sterbensrate() const;
+    void setToDie(bool newValue);
+    bool toDie() const;
     bool isAlive();
-    void setAlive();
     void Alive();
+
 
 signals:
 
 public slots:
+
+private slots:
+    void setAlive();
 
 private:
     QRectF Rect;
@@ -50,10 +53,11 @@ private:
     float speedX;
     float speedY;
     int randomAlter;
-    double sterbensrate;
+    //double sterbensrate;
     bool alive;
     bool simulation;
-    //QElapsedTimer *elapsedTimer;
+    bool die;
+    QTimer *toDieTimer;
 };
 
 #endif // SPIELFIGUR_H

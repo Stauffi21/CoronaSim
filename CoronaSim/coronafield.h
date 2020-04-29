@@ -51,7 +51,7 @@ private:
     int gesamtInfizierte;
     void Alive();
     int gesamtTote;
-    QTimer *statusTimer;
+    //QTimer *statusTimer;
 
 signals:
     void infziert();
@@ -65,8 +65,8 @@ public slots:
 private slots:
     void moveSpielfiguren();
     void showInfizierte();
-    void checkAlive();
     void showTote();
+    void toDie();
 };
 
 #endif // CORONAFIELD_H
