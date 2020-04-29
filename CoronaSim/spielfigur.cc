@@ -15,9 +15,15 @@ Spielfigur::Spielfigur(QPointF xy,float speedXY)
     randomAlter = (qrand()% ((99+0)-0)) + 0;
     alive = true;
     die = false;
+    immune = false;
+    recover = false;
     toDieTimer = new QTimer(this);
     connect(toDieTimer,SIGNAL(timeout()),this,SLOT(setAlive()));
     toDieTimer->setSingleShot(true);
+
+    immunityTimer = new QTimer(this);
+    connect(immunityTimer,SIGNAL(timeout()),this,SLOT(setImmune()));
+    immunityTimer->setSingleShot(true);
 }
 
 QRectF Spielfigur::BoundingRect()
@@ -133,8 +139,8 @@ int Spielfigur::isAlter() const{
 }
 
 void Spielfigur::setToDie(bool newValue){
-
     die = newValue;
+    immunityTimer->stop();
     toDieTimer->start(4000);
 }
 
@@ -154,4 +160,22 @@ bool Spielfigur::isAlive(){
 
 void Spielfigur::Alive(){
     alive = true;
+}
+
+void Spielfigur::setToRecover(bool newValue){
+    recover=newValue;
+    immunityTimer->start(12000);
+}
+
+bool Spielfigur::toRecover(){
+    return recover;
+}
+
+void Spielfigur::setImmune(){
+    removeInfect();
+    immune=true;
+}
+
+bool Spielfigur::isImmune(){
+    return immune;
 }

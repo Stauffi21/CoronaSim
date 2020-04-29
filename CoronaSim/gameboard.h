@@ -40,6 +40,7 @@ private slots:
     void showTime();
     void showInfizierte();
     void showTote();
+    void showImmune();
 };
 
 #endif // GAMEBOARD_H

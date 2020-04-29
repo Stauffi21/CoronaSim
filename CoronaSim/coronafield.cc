@@ -35,13 +35,16 @@ CoronaField::CoronaField(QWidget *parent) : QWidget(parent)
     sterbensrate = 0;
     gesamtInfizierte = 0;
     gesamtTote = 0;
+    gesamtImmune = 0;
 
     spielfigurTimer = new QTimer(this);
     spielfigurTimer->setInterval(15);
     connect(spielfigurTimer,SIGNAL(timeout()),this, SLOT(moveSpielfiguren()));
     connect(spielfigurTimer,SIGNAL(timeout()),this, SLOT(showInfizierte()));
     connect(spielfigurTimer,SIGNAL(timeout()),this, SLOT(showTote()));
+    connect(spielfigurTimer,SIGNAL(timeout()),this, SLOT(showImmune()));
     connect(spielfigurTimer,SIGNAL(timeout()),this, SLOT(toDie()));
+    connect(spielfigurTimer,SIGNAL(timeout()),this, SLOT(toRecover()));
 }
 
 void CoronaField::setValueMenschen(int newValue){
@@ -113,11 +116,6 @@ void CoronaField::setValueAktive(int newValue){
 
 void CoronaField::setValueSterben(double newValue){
     sterbensrate = newValue;
-    /*if(!spielfigurList.isEmpty()){
-        for(Spielfigur *spielfigur : spielfigurList) {
-            spielfigur->setSterbensrate(sterbensrate);
-        }
-    }*/
 }
 
 int CoronaField::ValueMenschen() const{
@@ -176,11 +174,6 @@ void CoronaField::paintEvent(QPaintEvent */*event*/)
 
 void CoronaField::paintSpielfiguren(QPainter &painter)
 {
-    /*if(GesamtInfizierte()==ValueMenschen()){
-        painter.setPen(Qt::black);
-        painter.setFont(QFont("Courier", 48, QFont::Bold));
-        painter.drawText(rect(), Qt::AlignCenter, tr("Alle Infiziert"));
-    }*/
 
     for(Spielfigur *spielfigur : spielfigurList) {
         painter.save();
@@ -189,6 +182,9 @@ void CoronaField::paintSpielfiguren(QPainter &painter)
             painter.setBrush(Qt::green);
         else if(!spielfigur->isAlive()){
             painter.setBrush(Qt::gray);
+        }
+        else if(spielfigur->isImmune()){
+            painter.setBrush(Qt::blue);
         }
         else{
             painter.setBrush(Qt::black);}
@@ -213,9 +209,9 @@ void CoronaField::moveSpielfiguren(){
         }
         for(Spielfigur *kollision : spielfigurList) {
             if(spielfigur != kollision && (spielfigur->isPos() - kollision->isPos()).manhattanLength() < 22.5) {
-                if((kollision->isAlive()&&spielfigur->isInfected())){
+                if((kollision->isAlive()&&spielfigur->isInfected()&&!kollision->isImmune())){
                     kollision->infect();}
-                if(spielfigur->isAlive()&&kollision->isInfected()){
+                if(spielfigur->isAlive()&&kollision->isInfected()&&!spielfigur->isImmune()){
                     spielfigur->infect();}
                 spielfigur->moveBack();
                 spielfigur->changeDirection(qrand()%5);
@@ -254,6 +250,7 @@ void CoronaField::resetSimulation(int resetMenschen, int resetInfizierte, int re
     this->setValueAktive(valueAktive);
     this->Alive();
     this->setGesamtTote(0);
+    this->setGesamtImmune(0);
 }
 
 void CoronaField::setGesamtInfizierte(int anzahl){
@@ -298,6 +295,14 @@ void CoronaField::toDie(){
     }
 }
 
+void CoronaField::toRecover(){
+    for(Spielfigur *spielfigur : spielfigurList) {
+        if(spielfigur->isInfected()&&!spielfigur->toRecover()&&!spielfigur->toDie()){
+            spielfigur->setToRecover(true);
+        }
+    }
+}
+
 void CoronaField::Alive(){
     for(Spielfigur *spielfigur : spielfigurList) {
         spielfigur->Alive();
@@ -316,7 +321,7 @@ int CoronaField::GesamtTote(){
 void CoronaField::showTote(){
     int anzahl = 0;
     for(Spielfigur *spielfigur : spielfigurList) {
-        if(spielfigur->isAlive()==false){
+        if(!spielfigur->isAlive()){
             anzahl=anzahl+1;
         }
         if(!(GesamtTote()==anzahl)){
@@ -326,5 +331,26 @@ void CoronaField::showTote(){
     if(GesamtTote()+GesamtInfizierte()==ValueMenschen()||anzahl==ValueMenschen()){
         stopSimulation();
         emit stop();
+    }
+}
+
+void CoronaField::setGesamtImmune(int anzahl){
+    gesamtImmune = anzahl;
+    emit immune();
+}
+
+int CoronaField::GesamtImmune(){
+    return gesamtImmune;
+}
+
+void CoronaField::showImmune(){
+    int anzahl = 0;
+    for(Spielfigur *spielfigur : spielfigurList) {
+        if(spielfigur->isImmune()){
+            anzahl=anzahl+1;
+        }
+        if(!(GesamtImmune()==anzahl)){
+            this->setGesamtImmune(anzahl);
+        }
     }
 }

@@ -35,6 +35,9 @@ public:
     bool toDie() const;
     bool isAlive();
     void Alive();
+    void setToRecover(bool newValue);
+    bool toRecover();
+    bool isImmune();
 
 
 signals:
@@ -43,6 +46,7 @@ public slots:
 
 private slots:
     void setAlive();
+    void setImmune();
 
 private:
     QRectF Rect;
@@ -53,11 +57,13 @@ private:
     float speedX;
     float speedY;
     int randomAlter;
-    //double sterbensrate;
     bool alive;
     bool simulation;
     bool die;
     QTimer *toDieTimer;
+    QTimer *immunityTimer;
+    bool immune;
+    bool recover;
 };
 
 #endif // SPIELFIGUR_H

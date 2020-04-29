@@ -26,12 +26,14 @@ gameboard::gameboard(QWidget *parent) :
     connect(ui->sterbensrate,SIGNAL(valueChanged(double)),this, SLOT(anzSterben(double)));
     connect(pCoronaField,SIGNAL(infziert()),this, SLOT(showInfizierte()));
     connect(pCoronaField,SIGNAL(tot()),this, SLOT(showTote()));
+    connect(pCoronaField,SIGNAL(immune()),this, SLOT(showImmune()));
     connect(pCoronaField,SIGNAL(stop()),this, SLOT(stopSimulation()));
     pCoronaField->setValueSterben(ui->sterbensrate->value());
     pCoronaField->setValueMenschen(ui->menschen->value());
     pCoronaField->setValueInfizierte(ui->infizierte->value());
     pCoronaField->setGesamtInfizierte(1);
     pCoronaField->setGesamtTote(0);
+    pCoronaField->setGesamtImmune(0);
     pCoronaField->setValueAktive(ui->aktive->value());
 }
 
@@ -111,4 +113,9 @@ void gameboard::showInfizierte(){
 void gameboard::showTote(){
     QString tote = QString::number(pCoronaField->GesamtTote());
     ui->anz_Tote->setText(tote);
+}
+
+void gameboard::showImmune(){
+    QString immune = QString::number(pCoronaField->GesamtImmune());
+    ui->anz_Immune->setText(immune);
 }
