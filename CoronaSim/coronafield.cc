@@ -36,6 +36,7 @@ CoronaField::CoronaField(QWidget *parent) : QWidget(parent)
     gesamtInfizierte = 0;
     gesamtTote = 0;
     gesamtImmune = 0;
+    timeStopped = 0;
 
     spielfigurTimer = new QTimer(this);
     spielfigurTimer->setInterval(15);
@@ -194,7 +195,7 @@ void CoronaField::paintSpielfiguren(QPainter &painter)
 
 void CoronaField::moveSpielfiguren(){
     for(Spielfigur *spielfigur : spielfigurList) {
-        if(!spielfigur->isAlive()){
+        if(!spielfigur->isAlive()||spielfigur->isIncubation()){
             spielfigur->removeActive();
         }
         spielfigur->move();
@@ -226,6 +227,9 @@ void CoronaField::startSimulation(){
         return;
     }
     else{
+        for(Spielfigur *spielfigur : spielfigurList) {
+            spielfigur->simulationStarted();
+        }
         spielfigurTimer->start();
     }
 }
@@ -233,6 +237,9 @@ void CoronaField::startSimulation(){
 void CoronaField::stopSimulation(){
     spielfigurTimer->stop();
     updateTimer->stop();
+    for(Spielfigur *spielfigur : spielfigurList) {
+        spielfigur->simulationStopped();
+    }
     update();
 }
 

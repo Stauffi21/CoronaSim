@@ -54,6 +54,7 @@ private:
     void Alive();
     int gesamtTote;
     int gesamtImmune;
+    int timeStopped;
     //QTimer *statusTimer;
 
 signals:

@@ -17,6 +17,10 @@ Spielfigur::Spielfigur(QPointF xy,float speedXY)
     die = false;
     immune = false;
     recover = false;
+    incubation = true;
+    stopTimeDie = 0;
+    stopTimeImmunity = 0;
+    stopTimeIncubation = 0;
     toDieTimer = new QTimer(this);
     connect(toDieTimer,SIGNAL(timeout()),this,SLOT(setAlive()));
     toDieTimer->setSingleShot(true);
@@ -24,6 +28,10 @@ Spielfigur::Spielfigur(QPointF xy,float speedXY)
     immunityTimer = new QTimer(this);
     connect(immunityTimer,SIGNAL(timeout()),this,SLOT(setImmune()));
     immunityTimer->setSingleShot(true);
+
+    incubationTimer = new QTimer(this);
+    connect(incubationTimer,SIGNAL(timeout()),this,SLOT(setIncubation()));
+    incubationTimer->setSingleShot(true);
 }
 
 QRectF Spielfigur::BoundingRect()
@@ -141,7 +149,7 @@ int Spielfigur::isAlter() const{
 void Spielfigur::setToDie(bool newValue){
     die = newValue;
     immunityTimer->stop();
-    toDieTimer->start(4000);
+    toDieTimer->start(8000);
 }
 
 bool Spielfigur::toDie() const{
@@ -152,6 +160,8 @@ void Spielfigur::setAlive(){
     removeInfect();
     die = false;
     alive=false;
+    incubation = false;
+    recover = false;
 }
 
 bool Spielfigur::isAlive(){
@@ -164,7 +174,8 @@ void Spielfigur::Alive(){
 
 void Spielfigur::setToRecover(bool newValue){
     recover=newValue;
-    immunityTimer->start(12000);
+    incubationTimer->start(5000);
+    immunityTimer->start(14000);
 }
 
 bool Spielfigur::toRecover(){
@@ -173,9 +184,46 @@ bool Spielfigur::toRecover(){
 
 void Spielfigur::setImmune(){
     removeInfect();
+    incubationTimer->stop();
+    setToRecover(false);
     immune=true;
 }
 
 bool Spielfigur::isImmune(){
     return immune;
+}
+
+void Spielfigur::setIncubation(){
+    incubation = false;
+}
+
+bool Spielfigur::isIncubation(){
+    return incubation;
+}
+
+void Spielfigur::simulationStopped(){
+    if(toDieTimer->isActive()){
+        stopTimeDie=toDieTimer->remainingTime();
+        toDieTimer->stop();
+    }
+    if(immunityTimer->isActive()){
+        stopTimeImmunity = immunityTimer->remainingTime();
+        immunityTimer->stop();
+    }
+    if(incubationTimer->isActive()){
+        stopTimeIncubation = incubationTimer->remainingTime();
+        incubationTimer->stop();
+    }
+}
+
+void Spielfigur::simulationStarted(){
+    if(toDie()){
+        toDieTimer->start(stopTimeDie);
+    }
+    if(toRecover()){
+        immunityTimer->start(stopTimeImmunity);
+    }
+    if(isIncubation()){
+        incubationTimer->start(stopTimeIncubation);
+    }
 }

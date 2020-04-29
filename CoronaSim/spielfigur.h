@@ -38,6 +38,9 @@ public:
     void setToRecover(bool newValue);
     bool toRecover();
     bool isImmune();
+    bool isIncubation();
+    void simulationStopped();
+    void simulationStarted();
 
 
 signals:
@@ -47,6 +50,7 @@ public slots:
 private slots:
     void setAlive();
     void setImmune();
+    void setIncubation();
 
 private:
     QRectF Rect;
@@ -62,8 +66,13 @@ private:
     bool die;
     QTimer *toDieTimer;
     QTimer *immunityTimer;
+    QTimer *incubationTimer;
     bool immune;
     bool recover;
+    bool incubation;
+    int stopTimeDie;
+    int stopTimeImmunity;
+    int stopTimeIncubation;
 };
 
 #endif // SPIELFIGUR_H
