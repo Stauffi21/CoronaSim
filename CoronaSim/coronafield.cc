@@ -10,6 +10,7 @@
 #include <QPointF>
 #include <QPaintEvent>
 #include <QString>
+#include <QFile>
 
 #include <math.h>
 #include <stdlib.h>
@@ -29,6 +30,10 @@ CoronaField::CoronaField(QWidget *parent) : QWidget(parent)
     setPalette(QPalette(QColor(255,255,255)));
     setAutoFillBackground(true);
 
+    if(file.exists("Simulation.csv")){
+        file.remove("Simulation.csv");
+    }
+
     valueMenschen=0;
     valueInfizierte=0;
     valueAktive = 0;
@@ -37,7 +42,8 @@ CoronaField::CoronaField(QWidget *parent) : QWidget(parent)
     gesamtTote = 0;
     gesamtImmune = 0;
     timeStopped = 0;
-
+    aufzeichnen = false;
+    aufzeichnungsnummer = 1;
     spielfigurTimer = new QTimer(this);
     spielfigurTimer->setInterval(15);
     connect(spielfigurTimer,SIGNAL(timeout()),this, SLOT(moveSpielfiguren()));
@@ -258,6 +264,19 @@ void CoronaField::resetSimulation(int resetMenschen, int resetInfizierte, int re
     this->Alive();
     this->setGesamtTote(0);
     this->setGesamtImmune(0);
+    if(aufzeichnen){
+        aufzeichnungsnummer++;
+        /*if(!file.exists("Simulation.csv")){
+            file.setFileName("Simulation.csv");
+        }
+        if(file.open(QIODevice::WriteOnly| QIODevice::Append | QIODevice::Text)) {
+
+            QTextStream stream(&file);
+            stream << "Messung, Zeit, Menschen, Aktiv, Infiziert, Immun, Tot" << endl;
+            file.close();
+        }*/
+
+    }
 }
 
 void CoronaField::setGesamtInfizierte(int anzahl){
@@ -359,5 +378,35 @@ void CoronaField::showImmune(){
         if(!(GesamtImmune()==anzahl)){
             this->setGesamtImmune(anzahl);
         }
+    }
+}
+
+void CoronaField::setSimAufzeichen(bool newValue){
+    aufzeichnen = newValue;
+    if(aufzeichnen){
+
+    }
+}
+
+bool CoronaField::simAufzeichnen(){
+    return aufzeichnen;
+}
+
+void CoronaField::record(QString currentTime){
+    if(!aufzeichnen){
+        return;
+    }
+    if(!file.exists("Simulation.csv")){
+        file.setFileName("Simulation.csv");
+        if (file.open(QIODevice::WriteOnly| QIODevice::Append | QIODevice::Text)) {
+            QTextStream stream(&file);
+            stream << "Messung, Zeit, Menschen, Aktiv, Infiziert, Immun, Tot" << endl;
+            file.close();
+        }
+    }
+    if (file.open(QIODevice::WriteOnly| QIODevice::Append | QIODevice::Text)) {
+        QTextStream stream(&file);
+        stream << QString::number(aufzeichnungsnummer) + ", " + currentTime + ", " + QString::number(ValueMenschen()) + ", " + QString::number(ValueAktive()) + ", " + QString::number(GesamtInfizierte()) + ", " + QString::number(GesamtImmune()) + ", " + QString::number(GesamtTote()) << endl;
+        file.close();
     }
 }

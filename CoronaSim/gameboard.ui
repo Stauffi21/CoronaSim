@@ -382,6 +382,20 @@
       </widget>
      </item>
      <item>
+      <widget class="QCheckBox" name="aufzeichnen">
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Daten aufzeichnen (.csv)</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QLabel" name="stoppwatch">
        <property name="minimumSize">
         <size>

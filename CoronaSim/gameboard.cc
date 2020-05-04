@@ -3,6 +3,7 @@
 #include "coronafield.h"
 #include <QTime>
 #include <QString>
+#include <QDebug>
 
 gameboard::gameboard(QWidget *parent) :
     QWidget(parent),
@@ -24,6 +25,7 @@ gameboard::gameboard(QWidget *parent) :
     connect(ui->infizierte,SIGNAL(valueChanged(int)),this, SLOT(anzInfizierte(int)));
     connect(ui->aktive,SIGNAL(valueChanged(int)),this, SLOT(anzAktive(int)));
     connect(ui->sterbensrate,SIGNAL(valueChanged(double)),this, SLOT(anzSterben(double)));
+    connect(ui->aufzeichnen,SIGNAL(stateChanged(int)),this, SLOT(aufzeichnenSimulation(int)));
     connect(pCoronaField,SIGNAL(infziert()),this, SLOT(showInfizierte()));
     connect(pCoronaField,SIGNAL(tot()),this, SLOT(showTote()));
     connect(pCoronaField,SIGNAL(immune()),this, SLOT(showImmune()));
@@ -35,6 +37,7 @@ gameboard::gameboard(QWidget *parent) :
     pCoronaField->setGesamtTote(0);
     pCoronaField->setGesamtImmune(0);
     pCoronaField->setValueAktive(ui->aktive->value());
+    pCoronaField->setSimAufzeichen(false);
 }
 
 gameboard::~gameboard()
@@ -103,6 +106,9 @@ void gameboard::showTime()
 {
     QString text = time->fromMSecsSinceStartOfDay(elapsedTimer->elapsed()+simulationStopped).toString("mm:ss:zzz");
     ui->stoppwatch->setText(text);
+    if(elapsedTimer->elapsed()%1000==0){
+        pCoronaField->record(text);
+    }
 }
 
 void gameboard::showInfizierte(){
@@ -118,4 +124,15 @@ void gameboard::showTote(){
 void gameboard::showImmune(){
     QString immune = QString::number(pCoronaField->GesamtImmune());
     ui->anz_Immune->setText(immune);
+}
+
+void gameboard::aufzeichnenSimulation(int state){
+    //qDebug() << state;
+    if(state == 0){
+        pCoronaField->setSimAufzeichen(false);
+    }
+
+    else if(state == 2){
+        pCoronaField->setSimAufzeichen(true);
+    }
 }

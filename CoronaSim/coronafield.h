@@ -9,6 +9,7 @@
 #include <QResizeEvent>
 #include <QPaintEvent>
 #include <QDateTime>
+#include <QFile>
 
 #include "spielfigur.h"
 
@@ -24,6 +25,8 @@ public:
     void setGesamtInfizierte(int anzahl);
     void setGesamtTote(int anzahl);
     void setGesamtImmune(int anzahl);
+    void setSimAufzeichen(bool newValue);
+    bool simAufzeichnen();
     int ValueMenschen() const;
     int ValueInfizierte() const;
     int ValueAktive() const;
@@ -32,6 +35,7 @@ public:
     int GesamtTote();
     int GesamtImmune();
     void resetSimulation(int resetMenschen, int resetInfizierte, int resetAktive);
+    void record(QString currentTime);
 
 protected:
     void paintEvent(QPaintEvent *);
@@ -41,6 +45,7 @@ private:
     void createSpielfigur();
     void deleteSpielfigur();
     void paintSpielfiguren(QPainter &painter);
+    void Alive();
 
     QTimer *spielfigurTimer;
     QTimer *updateTimer;
@@ -51,10 +56,12 @@ private:
     int valueAktive;
     double sterbensrate;
     int gesamtInfizierte;
-    void Alive();
     int gesamtTote;
     int gesamtImmune;
     int timeStopped;
+    bool aufzeichnen;
+    int aufzeichnungsnummer;
+    QFile file;
     //QTimer *statusTimer;
 
 signals:
