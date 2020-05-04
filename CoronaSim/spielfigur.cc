@@ -2,6 +2,7 @@
 #include "QDebug"
 #include <math.h>
 #include <QTimer>
+#include <QFileDialog>
 
 Spielfigur::Spielfigur(QPointF xy,float speedXY)
 {
@@ -149,7 +150,7 @@ int Spielfigur::isAlter() const{
 void Spielfigur::setToDie(bool newValue){
     die = newValue;
     immunityTimer->stop();
-    toDieTimer->start(8000);
+    toDieTimer->start(qrand()% ((8000+7000)-7000)+ 7000);
 }
 
 bool Spielfigur::toDie() const{
@@ -174,8 +175,8 @@ void Spielfigur::Alive(){
 
 void Spielfigur::setToRecover(bool newValue){
     recover=newValue;
-    incubationTimer->start(5000);
-    immunityTimer->start(14000);
+    incubationTimer->start(qrand()% ((5000+4000)-4000)+ 4000);
+    immunityTimer->start(qrand()% ((24000+10000)-10000)+ 10000);
 }
 
 bool Spielfigur::toRecover(){

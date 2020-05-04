@@ -11,6 +11,7 @@
 #include <QPaintEvent>
 #include <QString>
 #include <QFile>
+#include <QFileDialog>
 
 #include <math.h>
 #include <stdlib.h>
@@ -409,4 +410,8 @@ void CoronaField::record(QString currentTime){
         stream << QString::number(aufzeichnungsnummer) + ", " + currentTime + ", " + QString::number(ValueMenschen()) + ", " + QString::number(ValueAktive()) + ", " + QString::number(GesamtInfizierte()) + ", " + QString::number(GesamtImmune()) + ", " + QString::number(GesamtTote()) << endl;
         file.close();
     }
+}
+
+void CoronaField::fileExport(){
+    QString fname = QFileDialog::getSaveFileName(this, tr("Safe File"), "/home/$username/untitled.csv", tr("Text files (*.csv)"));
 }

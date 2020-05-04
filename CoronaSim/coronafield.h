@@ -36,6 +36,7 @@ public:
     int GesamtImmune();
     void resetSimulation(int resetMenschen, int resetInfizierte, int resetAktive);
     void record(QString currentTime);
+    void fileExport();
 
 protected:
     void paintEvent(QPaintEvent *);

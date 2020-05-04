@@ -42,6 +42,7 @@ private slots:
     void showTote();
     void showImmune();
     void aufzeichnenSimulation(int aufzeichnen);
+    void isExport();
 };
 
 #endif // GAMEBOARD_H

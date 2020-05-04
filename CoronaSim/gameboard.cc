@@ -4,6 +4,7 @@
 #include <QTime>
 #include <QString>
 #include <QDebug>
+#include <QFileDialog>
 
 gameboard::gameboard(QWidget *parent) :
     QWidget(parent),
@@ -26,6 +27,7 @@ gameboard::gameboard(QWidget *parent) :
     connect(ui->aktive,SIGNAL(valueChanged(int)),this, SLOT(anzAktive(int)));
     connect(ui->sterbensrate,SIGNAL(valueChanged(double)),this, SLOT(anzSterben(double)));
     connect(ui->aufzeichnen,SIGNAL(stateChanged(int)),this, SLOT(aufzeichnenSimulation(int)));
+    connect(ui->export_2,SIGNAL(clicked()),this, SLOT(isExport()));
     connect(pCoronaField,SIGNAL(infziert()),this, SLOT(showInfizierte()));
     connect(pCoronaField,SIGNAL(tot()),this, SLOT(showTote()));
     connect(pCoronaField,SIGNAL(immune()),this, SLOT(showImmune()));
@@ -135,4 +137,8 @@ void gameboard::aufzeichnenSimulation(int state){
     else if(state == 2){
         pCoronaField->setSimAufzeichen(true);
     }
+}
+
+void gameboard::isExport(){
+    pCoronaField->fileExport();
 }
