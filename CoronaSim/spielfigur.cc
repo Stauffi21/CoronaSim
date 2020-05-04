@@ -17,7 +17,7 @@ Spielfigur::Spielfigur(QPointF xy,float speedXY)
     die = false;
     immune = false;
     recover = false;
-    incubation = true;
+    incubation = false;
     stopTimeDie = 0;
     stopTimeImmunity = 0;
     stopTimeIncubation = 0;
@@ -186,6 +186,7 @@ void Spielfigur::setImmune(){
     removeInfect();
     incubationTimer->stop();
     setToRecover(false);
+    incubation = false;
     immune=true;
 }
 
@@ -194,7 +195,7 @@ bool Spielfigur::isImmune(){
 }
 
 void Spielfigur::setIncubation(){
-    incubation = false;
+    incubation = true;
 }
 
 bool Spielfigur::isIncubation(){
@@ -223,7 +224,7 @@ void Spielfigur::simulationStarted(){
     if(toRecover()){
         immunityTimer->start(stopTimeImmunity);
     }
-    if(isIncubation()){
+    if(toRecover()&&!isIncubation()){
         incubationTimer->start(stopTimeIncubation);
     }
 }

@@ -147,7 +147,7 @@ void CoronaField::createSpielfigur(){
     do {
         versuche += 1;
         beruerung = false;
-        startPosition = QPointF(zufallsZahl(25, width() - 25), zufallsZahl(25, height() - 25));
+        startPosition = QPointF(zufallsZahl(30, width() - 30), zufallsZahl(30, height() - 30));
         for(Spielfigur *spielfigur : spielfigurList) {
             if((startPosition - spielfigur->isPos()).manhattanLength() < 40) {
                 beruerung = true;
