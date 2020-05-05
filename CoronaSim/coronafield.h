@@ -63,7 +63,6 @@ private:
     bool aufzeichnen;
     int aufzeichnungsnummer;
     QFile file;
-    //QTimer *statusTimer;
 
 signals:
     void infziert();

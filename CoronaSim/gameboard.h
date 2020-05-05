@@ -28,6 +28,7 @@ private:
     QElapsedTimer *elapsedTimer;
     int simulationStopped;
     QTimer *timer;
+    QTimer *recordTimer;
 
 private slots:
     void anzMenschen(int newValue);
@@ -43,6 +44,7 @@ private slots:
     void showImmune();
     void aufzeichnenSimulation(int aufzeichnen);
     void isExport();
+    void saveData();
 };
 
 #endif // GAMEBOARD_H

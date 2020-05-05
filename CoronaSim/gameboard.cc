@@ -18,7 +18,10 @@ gameboard::gameboard(QWidget *parent) :
     simulationStopped = 0;
     timer = new QTimer();
     timer->setInterval(10);
+    recordTimer = new QTimer();
+    recordTimer->setInterval(1000);
     connect(timer,SIGNAL(timeout()),this,SLOT(showTime()));
+    connect(recordTimer, SIGNAL(timeout()), this, SLOT(saveData()));
     connect(ui->start,SIGNAL(clicked()),this,SLOT(startSimulation()));
     connect(ui->stop,SIGNAL(clicked()),this,SLOT(stopSimulation()));
     connect(ui->reset,SIGNAL(clicked()),this, SLOT(resetSimulation()));
@@ -86,6 +89,9 @@ void gameboard::anzSterben(double newValue){
     pCoronaField->setValueSterben(newValue);
 }
 void gameboard::startSimulation(){
+    if(pCoronaField->simAufzeichnen()){
+        recordTimer->start();
+    }
     pCoronaField->startSimulation();
     timer->start();
     elapsedTimer->start();
@@ -95,10 +101,12 @@ void gameboard::stopSimulation(){
     simulationStopped = simulationStopped+elapsedTimer->elapsed();
     pCoronaField->stopSimulation();
     timer->stop();
+    recordTimer->stop();
 }
 
 void gameboard::resetSimulation(){
     timer->stop();
+    recordTimer->stop();
     simulationStopped=0;
     ui->stoppwatch->setText("00:00:000");
     pCoronaField->resetSimulation(ui->menschen->value(), ui->infizierte->value(), ui->aktive->value());
@@ -108,9 +116,6 @@ void gameboard::showTime()
 {
     QString text = time->fromMSecsSinceStartOfDay(elapsedTimer->elapsed()+simulationStopped).toString("mm:ss:zzz");
     ui->stoppwatch->setText(text);
-    if(elapsedTimer->elapsed()%1000==0){
-        pCoronaField->record(text);
-    }
 }
 
 void gameboard::showInfizierte(){
@@ -140,5 +145,10 @@ void gameboard::aufzeichnenSimulation(int state){
 }
 
 void gameboard::isExport(){
+    this->stopSimulation();
     pCoronaField->fileExport();
+}
+
+void gameboard::saveData(){
+    pCoronaField->record(ui->stoppwatch->text());
 }

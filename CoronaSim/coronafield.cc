@@ -399,13 +399,13 @@ void CoronaField::record(QString currentTime){
     }
     if(!file.exists("Simulation.csv")){
         file.setFileName("Simulation.csv");
-        if (file.open(QIODevice::WriteOnly| QIODevice::Append | QIODevice::Text)) {
+        if (file.open(QIODevice::WriteOnly|QIODevice::Append|QIODevice::Text)) {
             QTextStream stream(&file);
             stream << "Messung, Zeit, Menschen, Aktiv, Infiziert, Immun, Tot" << endl;
             file.close();
         }
     }
-    if (file.open(QIODevice::WriteOnly| QIODevice::Append | QIODevice::Text)) {
+    if (file.open(QIODevice::WriteOnly|QIODevice::Append|QIODevice::Text)) {
         QTextStream stream(&file);
         stream << QString::number(aufzeichnungsnummer) + ", " + currentTime + ", " + QString::number(ValueMenschen()) + ", " + QString::number(ValueAktive()) + ", " + QString::number(GesamtInfizierte()) + ", " + QString::number(GesamtImmune()) + ", " + QString::number(GesamtTote()) << endl;
         file.close();
@@ -413,5 +413,16 @@ void CoronaField::record(QString currentTime){
 }
 
 void CoronaField::fileExport(){
-    QString fname = QFileDialog::getSaveFileName(this, tr("Safe File"), "/home/$username/untitled.csv", tr("Text files (*.csv)"));
+    if(!QFile::exists("Simulation.csv")){
+        return;
+    }
+    QFileDialog fileDialog;
+    QString fname = fileDialog.getSaveFileName(this, tr("Safe File"), "/home/untitled.csv", tr("Text files (*.csv)"));
+    if(fname.isEmpty()){
+        return;
+    }
+    if(QFile::exists(fname)){
+        QFile::remove(fname);
+    }
+    file.copy(fname);
 }
